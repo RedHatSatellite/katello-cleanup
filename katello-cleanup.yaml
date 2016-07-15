@@ -1,0 +1,9 @@
+---
+:settings:
+  :user: admin
+  :pass: changeme
+  :uri: https://localhost
+  :org: 1
+  :timeout: 300
+  :ignore:
+    - esx.*\.example\.com
