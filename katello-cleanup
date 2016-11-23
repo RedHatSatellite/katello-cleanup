@@ -142,7 +142,11 @@ def cleanup()
   dropped_systems.each do |system|
     puts "#{system['name']} (#{system['id']} #{system['checkin_time']} #{system['reason']})"
     if not @options[:noop]
-      api.resource(:systems).call(:destroy, {:id => system['id']})
+      if system.has_key?('host_id')
+        api.resource(:hosts).call(:destroy, {:id => system['host_id']})
+      else
+        api.resource(:systems).call(:destroy, {:id => system['id']})
+      end
     else
       puts "  [noop] destroy system id #{system['id']}"
     end
