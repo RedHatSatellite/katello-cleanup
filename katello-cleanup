@@ -104,10 +104,13 @@ def cleanup()
 
   systems.each do |system|
 
+    puts "Checking #{system['name']}"
+
     skip_system = false
     @ignoreregex.each do |i|
       if i.match(system['name'])
         skip_system = true
+        puts " System #{system['name']} matches #{i}, skipping"
       end
     end
     next if skip_system
