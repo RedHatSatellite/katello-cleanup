@@ -87,6 +87,13 @@ end
 def cleanup()
   api = ApipieBindings::API.new({:uri => @options[:uri], :username => @options[:user], :password => @options[:pass], :api_version => '2', :timeout => @options[:timeout]})
 
+  req = api.resource(:home).call(:status)
+  if Gem::Version.new(req['version']) >= Gem::Version.new('1.11')
+    @host_resource = :hosts
+  else
+    @host_resource = :systems
+  end
+
   systems = []
   unique_systems = {}
   dropped_systems = []
@@ -98,7 +105,7 @@ def cleanup()
   # but then we would miss the most duplicates
   while (page == 0 or req['results'].length == req['per_page'].to_i)
     page += 1
-    req = api.resource(:systems).call(:index, {:organization_id => @options[:org], :page => page, :per_page => 100})
+    req = api.resource(@host_resource).call(:index, {:organization_id => @options[:org], :page => page, :per_page => 100})
     systems.concat(req['results'])
   end
 
@@ -117,6 +124,8 @@ def cleanup()
 
     if system['checkin_time']
       t = Time.xmlschema(system['checkin_time']) rescue Time.parse(system['checkin_time'])
+    elsif system.key?('subscription_facet_attributes') and system['subscription_facet_attributes']['last_checkin']
+      t = Time.xmlschema(system['subscription_facet_attributes']['last_checkin']) rescue Time.parse(system['subscription_facet_attributes']['last_checkin'])
     else
       t = Time.new(0)
     end
@@ -145,11 +154,7 @@ def cleanup()
   dropped_systems.each do |system|
     puts "#{system['name']} (#{system['id']} #{system['checkin_time']} #{system['reason']})"
     if not @options[:noop]
-      if system.has_key?('host_id')
-        api.resource(:hosts).call(:destroy, {:id => system['host_id']})
-      else
-        api.resource(:systems).call(:destroy, {:id => system['id']})
-      end
+      api.resource(@host_resource).call(:destroy, {:id => system['id']})
     else
       puts "  [noop] destroy system id #{system['id']}"
     end
