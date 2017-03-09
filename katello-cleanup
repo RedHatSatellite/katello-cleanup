@@ -116,7 +116,7 @@ def cleanup()
     next if skip_system
 
     if system['checkin_time']
-      t = Time.xmlschmea(system['checkin_time']) rescue Time.parse(system['checkin_time'])
+      t = Time.xmlschema(system['checkin_time']) rescue Time.parse(system['checkin_time'])
     else
       t = Time.new(0)
     end
