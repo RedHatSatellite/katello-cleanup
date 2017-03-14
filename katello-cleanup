@@ -120,6 +120,10 @@ def cleanup()
         puts " System #{system['name']} matches #{i}, skipping"
       end
     end
+    if not skip_system and system['build']
+      skip_system = true
+      puts " System #{system['name']} is in build mode, skipping"
+    end
     next if skip_system
 
     if system['checkin_time']
