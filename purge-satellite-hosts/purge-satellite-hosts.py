@@ -16,6 +16,8 @@
 #
 # Script to remove registered hosts to a Red Hat Satellite server that have
 # not checked-in in a given number of days.
+#
+# author: Jose Delarosa (@jose-delarosa)
 
 # Import required modules
 try:
