@@ -64,7 +64,7 @@ def remove_host(user, password, satellite, host):
 
 
 def compare_ts(days_limit, last_checkin, daten, timen, fd):
-    secs_limit = days_limit * 86400
+    secs_limit = int(days_limit) * 86400
     last_checkin_date = last_checkin.split(' ')[0].split("-")
     last_checkin_time = last_checkin.split(' ')[-1].split(":")
 
@@ -133,7 +133,7 @@ def my_main():
                 ret_value = compare_ts(args.days, last_checkin, date, time, fd)
                 if ret_value == 1:
                     fd.write(" Threshold exceeded!\n")
-                    remove_host(args.user, args.password, args.sat, args.hostname)
+                    remove_host(args.user, args.password, args.sat, hostname)
                 else:
                     fd.write(" OK\n")
             else:
