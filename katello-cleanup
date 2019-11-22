@@ -21,14 +21,15 @@ require 'apipie-bindings'
 require 'time'
 
 @defaults = {
-  :noop      => false,
-  :uri       => 'https://localhost/',
-  :user      => 'admin',
-  :pass      => 'changeme',
-  :timeout   => 300,
-  :org       => 1,
-  :ignore    => [],
-  :age       => 90*24*60*60,
+  :noop       => false,
+  :uri        => 'https://localhost/',
+  :user       => 'admin',
+  :pass       => 'changeme',
+  :verify_ssl => true,
+  :timeout    => 300,
+  :org        => 1,
+  :ignore     => [],
+  :age        => 90*24*60*60,
 }
 
 @options = {
@@ -60,6 +61,9 @@ optparse = OptionParser.new do |opts|
   opts.on("-n", "--noop", "do not actually execute anything") do
     @options[:noop] = true
   end
+  opts.on("--no-verify-ssl", "don't verify SSL certs") do
+    @options[:verify_ssl] = false
+  end
 end
 optparse.parse!
 
@@ -85,7 +89,7 @@ end
 end
 
 def cleanup()
-  api = ApipieBindings::API.new({:uri => @options[:uri], :username => @options[:user], :password => @options[:pass], :api_version => '2', :timeout => @options[:timeout]})
+  api = ApipieBindings::API.new({:uri => @options[:uri], :username => @options[:user], :password => @options[:pass], :api_version => '2', :timeout => @options[:timeout]}, {:verify_ssl => @options[:verify_ssl]})
 
   req = api.resource(:home).call(:status)
   if Gem::Version.new(req['version']) >= Gem::Version.new('1.11')
